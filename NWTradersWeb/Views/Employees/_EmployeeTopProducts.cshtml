@@ -1,0 +1,198 @@
+﻿@using NWTradersWeb.Models
+@model IEnumerable<ProductSales>
+
+@{
+
+    ViewBag.Title = "Top 10 Customers";
+    decimal CompanyTotal = ViewBag.CompanyTotalSales;
+    decimal EmployeeTotal = ViewBag.EmployeeTotalSales;
+    string companyRatio, yourRatio;
+
+    List<string> theYears = NWTradersUtilities.BeginToEndOrderYears();
+    theYears.RemoveAt(0);
+
+    List<SelectListItem> Years = theYears.Select(item => new SelectListItem
+    {
+        Value = item,
+        Text = item
+    }).
+    ToList();
+    Years.Insert(0, new SelectListItem { Text = "All", Value = "" });
+
+    List<SelectListItem> Categories = NWTradersUtilities.AllCategories().Select(cat => new SelectListItem
+    {
+        Value = cat.CategoryName,
+        Text = cat.CategoryName
+    }).ToList();
+    Categories.Insert(0, new SelectListItem { Text = "All", Value = "" });
+
+
+
+}
+
+
+<div id="EmployeeTopProducts">
+
+    <div class="card-header">
+        <h5 class="text-center"> Top 10 Revenue Generating Products</h5>
+    </div>
+
+    <div> &nbsp;</div>
+
+    <div class="navbar shadow small">
+
+        <div class="input-group-sm">
+            Select Year
+            @Html.DropDownList("Year", Years,
+                         new
+                         {
+                             @class = "custom-select small",
+                             @id = "Year",
+                             @onchange = "RefreshPage();"
+                         })
+        </div>
+
+        <div class="input-group-sm">
+            Select Category
+            @Html.DropDownList("Category", Categories,
+                         new
+                         {
+                             @class = "custom-select small",
+                             @id = "Category",
+                             @onchange = "RefreshPage();"
+                         })
+        </div>
+
+    </div>
+
+    <div> &nbsp;</div>
+
+    <div class="card-body">
+        <div class="row small">
+            <div class="col-6">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="text-center" colspan="3">  Company Top Products </th>
+                    </tr>
+                    <tr>
+                        <th class="px-1"> Product</th>
+                        <th class="px-1 text-right"> Sales </th>
+                        <th class="px-1 text-right"> % of <br />Company Sales </th>
+
+                    </tr>
+
+                    @foreach (ProductSales item in ViewBag.AllEmployeeSales)
+                    {
+                        companyRatio = (item.Sales / CompanyTotal).ToString("##0.00 %");
+
+                        <tr>
+                            <td class="px-1"> @item.ProductName </td>
+                            <td class="px-1 text-right"> @item.Sales.ToString("$#,##0.00") </td>
+                            <td class="px-1 text-right"> @companyRatio</td>
+                        </tr>
+
+                    }
+                </table>
+            </div>
+
+            <div class="col-6">
+                <table class="table table-hover">
+                    <tr>
+                        <th class="text-center" colspan="4">  Your Top 10 @ViewBag.Category in @ViewBag.Year </th>
+                    </tr>
+                    <tr>
+                        <th class="px-1"> Product</th>
+                        <th class="px-1"> Category</th>
+                        <th class="px-1 text-right"> Sales </th>
+                        <th class="px-1 text-right"> % of <br /> Your Sales </th>
+
+                    </tr>
+
+                    @foreach (ProductSales item in Model)
+                    {
+                        yourRatio = (item.Sales / EmployeeTotal).ToString("##0.00 %");
+                        <tr>
+                            <td class="px-1"> @item.ProductName </td>
+                            <td class="px-1"> @item.ProductCategory</td>
+                            <td class="px-1 text-right"> @item.Sales.ToString("$#,##0.00") </td>
+                            <td class="px-1 text-right"> @yourRatio </td>
+                        </tr>
+
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert-light py-4 text-center" id="Charts">
+        Charts go here
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+        AllYearSales();
+    });
+
+    function RefreshPage() {
+
+        var year = $('#Year').val();
+        var category = $('#Category').val();
+
+        $("#EmployeeTopProducts").empty();
+
+        $(function () {
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("EmployeeTopProducts", "Employees")',
+                data: {
+                    Year: year,
+                    Category: category,
+                },
+                success: function (partialViewResult)
+                { $("#EmployeeTopProducts").html(partialViewResult); },
+
+                error: function ()
+                { $('#EmployeeTopProducts').html('Something went wrong in getting employee top Products'); }
+
+            });
+        })
+    }
+
+
+    function AllYearSales()
+    {
+        $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetEmployeeTopProductsAllYears", "Employees")',
+                data: { },
+                success: function (chartsdata)
+                {
+                    var Products = chartsdata.JSONList.Products;
+                    var Years = chartsdata.JSONList.Years;
+                    var Data = chartsdata.JSONList.Sales;
+
+
+
+                },
+                error: function () { $('#Chart').html('Something went wrong in drawing Sales Chart'); }
+                ,
+
+            });
+        })
+    }
+
+    function AnnualSalesInYear(year)
+    {
+
+
+    }
+
+</script>
+
+
+

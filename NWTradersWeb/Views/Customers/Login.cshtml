@@ -1,0 +1,113 @@
+﻿@using NWTradersWeb.Models;
+
+@model Customer
+@{
+
+    // Clear the session so that current users may be logged out.
+    Session.Clear();
+
+    ViewBag.Title = "North Wind Traders User Login.";
+    SelectList allCompanies = new SelectList(NWTradersUtilities.AllCompanyNames());
+
+    string CompanyNameMessage = ViewBag.CompanyNameMessage as string;
+    string CustomerIDMessage = ViewBag.CustomerIDMessage as string;
+
+    string CompanyName = ViewBag.CompanyName as string;
+
+}
+
+
+<div class="container alert-light p-2">
+    <hr />
+</div>
+
+<table class="container" style="width:80%">
+
+    <tr class="">
+        <td class="">
+            <div class="text-center h2 rounded-lg py-2">
+                <div class="rounded-lg">
+                    <img src="~/images/NorthWind.jpg" class="shadow-sm py-2" height="300" />
+                </div>
+                <div>
+                    Welcome to North Wind Traders
+                </div>
+
+            </div>
+        </td>
+
+        <td class="container rounded-lg py-4 w3-border-black" style="width:50%">
+
+            @if (string.IsNullOrEmpty(ViewBag.LogOutMessage) == false)
+            {<div class="alert-light"> @ViewBag.LogOutMessage </div>}
+            
+            <div class="card-header text-center py-2 rounded-lg" style="background-color: palegoldenrod">
+                <h3> Select your Company and enter password.</h3>
+            </div>
+
+            <!-- Begin Login Form -->
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+
+                <!--Card content-->
+                <div class="card-body border ">
+                    <!-- User Name-->
+                    <div class="custom-control py-4 alert-light">
+                        Select Company
+                        <br />
+                        @Html.DropDownList("CompanyName", allCompanies as SelectList,
+                                new
+                                     {
+                                    @class = "custom-select",
+                                })
+
+                        @if (!string.IsNullOrEmpty(CompanyNameMessage))
+                        {
+                            <div class="alert-danger"> @CompanyNameMessage</div>
+                        }
+                    </div>
+
+                    <!-- Password -->
+                    <div class="custom-control py-4 alert-light">
+                        Enter your Customer ID (as the password)
+                        <br />
+                        @Html.PasswordFor(model => model.CustomerID,
+                       new { @class = "form-control ", @style = "font-size: small", placeholder = "Enter Password (Customer ID)" })
+
+                        @Html.ValidationMessageFor(model => model.CustomerID, "", new { @class = "text-danger" })
+                    </div>
+                    @if (!string.IsNullOrEmpty(CustomerIDMessage))
+                    {
+                        <div class="alert-danger">@CustomerIDMessage</div>
+                    }
+
+                </div>
+
+                <!-- Login or Cancel -->
+                <div class="card-footer text-center">
+
+                    <input type="submit" value="Login"
+                           class="btn btn-light btn-outline-secondary" />
+
+                    &nbsp; &nbsp;&nbsp;
+
+                    <input type="submit" value="Logout"
+                           class="btn btn-light btn-outline-secondary" />
+
+                </div>
+
+            }
+        </td>
+
+    </tr>
+</table>
+
+<div class="container alert-light p-2">
+    <hr />
+</div>
+
+
+
+

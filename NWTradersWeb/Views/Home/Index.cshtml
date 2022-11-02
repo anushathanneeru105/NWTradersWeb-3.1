@@ -1,0 +1,90 @@
+﻿@using NWTradersWeb.Models;
+
+@{
+    ViewBag.Title = "Wecome to North Wind Traders";
+    Customer CurrentCustomer = Session["currentCustomer"] as Customer;
+
+}
+
+
+<div class="card-deck">
+
+    <div class="card ">
+        <div class="card-header h4 text-center">
+            Our Customers
+        </div>
+
+        <div class="card-body">
+            Clilck on customers to get information about the North Wind Traders Customers
+        </div>
+
+        <div class="card-footer">
+            <div class="alert-dark py-2">
+                Customer Log-In here
+            </div>
+            <div type=" button" class="btn btn-light  rounded shadow-lg">
+                <i class="material-icons align-text-bottom">group</i>
+                @Html.ActionLink("NW Traders Customers", "Index", "Customers")
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="card-header h4 text-center">
+            Our Products
+        </div>
+
+        <div class="card-body">
+            Clilck on Products to get information about the North Wind Traders Customers.
+        </div>
+
+        <div class="card-footer">
+            <div class="alert-dark py-2">
+                Browse our products
+            </div>
+            <div type=" button " class="btn btn-light  rounded shadow-lg text-center"
+                 title=" Products will go here">
+                <i class="material-icons align-text-bottom">business</i>
+                @Html.ActionLink(
+                        "NW Traders Products", //text displayed.
+                        "Index",  // Name of Function / page
+                        "Products" // Name of Controller.
+                )
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header h4 text-center">
+            Your Orders
+        </div>
+
+        <div class="card-body">
+            North Wind Traders Customers:
+            Clilck on Orders to get information about the orders you have placed and place new orders.
+        </div>
+
+        <div class="card-footer">
+            <div class="alert-dark py-2">
+                Requires Login
+            </div>
+            <div type=" button" class="btn btn-light  rounded shadow-lg"
+                 title=" Your Orders - Or Login">
+                @if (Session["currentCustomer"] == null)
+                {
+                    <i class="fas  fa-lg fa-user-lock"></i>
+                    @Html.ActionLink("Orders [Log In Required]", "Login", "Customers")
+
+                }
+                else
+                {
+                    <i class="fas  fa-lg fa-shopping-bag" style=""></i>
+                    @Html.ActionLink("Your Orders ", "Details", "Customers",
+                   new { @id = CurrentCustomer.CustomerID }, new { })
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

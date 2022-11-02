@@ -1,0 +1,47 @@
+﻿
+@using NWTradersWeb.Models;
+@model IEnumerable<CustomerSales>
+
+<div class="card">
+    <div class="card-header navbar">
+        <div>
+            <h6>
+                Annual Orders
+            </h6>
+
+        </div>
+    </div>
+</div>
+
+<div>
+    <h4 class=text-center p-4 rounded-lg> New view still in progress </h4>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th> Year</th>
+            <th> Number Of orders</th>
+            <th> Sales</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach(CustomerSales item in Model)
+            {
+            <tr>
+                <td>
+                    @item.SalesPeriod
+                </td>
+                <td>
+                    @item.numberOfOrders
+                </td>
+                <td>
+                    @item.Sales
+                </td>
+            </tr>
+            }
+
+    </tbody>
+</table>
+
+</div>

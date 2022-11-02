@@ -1,0 +1,81 @@
+﻿@using NWTradersWeb.Models;
+@model Customer
+
+@{
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+}
+
+<!-- Shopping Cart (CurrentOrder) for the customer.-->
+<div class="">
+    <table class="table-bordered table-striped">
+        <tr>
+            <td colspan="4" class="h5 py-2 text-center" style="background-color: lightsteelblue">
+                <i class="fas fa-shopping-cart fa-lg"> </i>
+                Your Cart
+            </td>
+        </tr>
+
+        <tr class="text-center small">
+            <th class="text-center px-2">Product</th>
+            <th class="text-right px-2">Quantity</th>
+            <th class="text-right px-2">Sub-Total</th>
+            <th class="text-center px-2">Add / Remove</th>
+        </tr>
+
+        @if (currentCustomer != null)
+        {
+            if (currentCustomer.myShoppingCart != null && currentCustomer.myShoppingCart.Order_Details.Count() > 0)
+            {
+                foreach (Order_Detail od in currentCustomer.myShoppingCart.Order_Details)
+                {
+                    <tr class="py-3 text-center ">
+
+                        <td class="p-2">
+                            @Html.DisplayFor(item => od.Product.ProductName)
+                        </td>
+
+                            <td class="p2">
+                                @Html.DisplayFor(item => od.Quantity)
+                            </td>
+
+                            <td class="p-2">
+                                @Html.DisplayFor(item => od.Total)
+                            </td>
+
+                            <td title="Add or Remove 1 from cart">
+                                @Html.ActionLink(
+                                           "add_circle", // the link displayed
+                                           "AddToCart", // the function to call
+                                           "Customers", // the name of the controller
+                                           new { @ProductID = od.ProductID }, // Any paramters sent to the function.
+                                           new { @class = "btn material-icons", @style = "color:green" } // Any formatting applied
+                                       )
+
+                                @Html.ActionLink(
+                                           "remove_circle", // the link displayed
+                                           "RemoveFromCart", // the function to call
+                                           "Customers", // the name of the controller
+                                           new { @ProductID = od.ProductID }, // Any paramters sent to the function.
+                                           new { @class = "btn material-icons", @style = "color:darkred" } // Any formatting applied
+                                       )
+
+                            </td>
+
+
+                        </tr>
+                }
+            }
+        }
+
+
+        <tr>
+            <td colspan="4" class="h5 py-2 text-center" style="background-color: lightsteelblue">
+                @Html.ActionLink("Check Out", "Create", "Orders",
+                            new { },
+                            new { @class = "btn btn-dark btn-sm small" }
+                            )
+            </td>
+        </tr>
+    </table>
+</div>
+

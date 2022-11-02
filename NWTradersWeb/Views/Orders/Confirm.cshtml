@@ -1,0 +1,140 @@
+﻿@using NWTradersWeb.Models;
+@model Order
+
+@{
+
+    ViewBag.Title = "Confirm Order";
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+    Order currentOrder = currentCustomer.theCurrentOrder;
+
+
+}
+
+<div class="container shadow py-2 alert-secondary">
+    <h2 class="text-center ">
+        Welcome @currentCustomer.CompanyName
+    </h2>
+</div>
+
+<div class="row py-4">
+    <div class="col-9">
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="input-group-sm form-group">
+                <div class="h5" style="">
+                    Order Information
+                </div>
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.OrderID)
+                @Html.HiddenFor(model => model.Customer.CustomerID)
+
+                <div class="form-group">
+                    Employee:
+                    @Html.DropDownList("EmployeeID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EmployeeID, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Order Date
+                    @Html.EditorFor(model => model.OrderDate,
+                   new { @class = "form-control", @value = currentOrder.OrderDate })
+                    @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Required Date:
+                    @Html.EditorFor(model => model.RequiredDate,
+                                  new { @class = "form-control", @value = currentOrder.RequiredDate })
+                    @Html.ValidationMessageFor(model => model.RequiredDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Shipped Date:
+                    @Html.EditorFor(model => model.ShippedDate,
+                                  new { @class = "form-control", @value = currentOrder.ShippedDate })
+                    @Html.ValidationMessageFor(model => model.ShippedDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Shipping Via:
+                    @Html.DropDownList("ShipVia", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ShipVia, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Freight
+                    @Html.EditorFor(model => model.Freight, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Freight, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Ship to:
+                    @Html.EditorFor(model => model.ShipName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ShipName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Ship Address:
+                    @Html.EditorFor(model => model.ShipAddress, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ShipAddress, "", new { @class = "text-danger" })
+
+                </div>
+
+                <div class="form-group">
+                    City:
+                    @Html.EditorFor(model => model.ShipCity, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ShipCity, "", new { @class = "text-danger" })
+
+                </div>
+
+                <div class="form-group">
+                    Region:
+                    @Html.EditorFor(model => model.ShipRegion, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ShipRegion, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Postal Code:
+                    @Html.EditorFor(model => model.ShipPostalCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ShipPostalCode, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    Country
+                    @Html.EditorFor(model => model.ShipCountry, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ShipCountry, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-default" />
+                        <div class="btn"> @Html.ActionLink("Cancel", "Cancel", "Orders")</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-3">
+
+        @Html.Partial("_FinalOrder", currentOrder)
+
+    </div>
+
+    <div class="card-footer text-center " style="background-color: lightyellow; font-size:small">
+    </div>
+</div>
+
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

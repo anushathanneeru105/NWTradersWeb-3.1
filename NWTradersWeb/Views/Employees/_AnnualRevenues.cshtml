@@ -1,0 +1,140 @@
+﻿@using NWTradersWeb.Models
+@model IEnumerable<OrderRevenues>
+
+@{ 
+    Employee currentEmployee = Session["currentEmployee"] as Employee;
+}
+<div class="card">
+    <div class="card-header">
+        <h6> Annual Revenues </h6>
+    </div>
+
+    <div class="card-body small" >
+
+        <div id="" class="row" style="min-height:400px">
+
+            <div class="col-2">
+                <table class="table-striped table">
+                    <tr>
+                        <th>Year</th>
+                        <th> Revenues </th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td> @item.Date</td>
+                            <td class="text-right px-2"> @item.Sales.ToString("$#, ###")</td>
+                        </tr>
+
+                    }
+                </table>
+            </div>
+            
+            <div id="Chart" class="col-6">
+
+            </div>
+            <div id="Pie" class="col-4">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        google.charts.setOnLoadCallback(DrawAnnualRevenuesChart('Chart'));
+
+    })
+
+    function DrawAnnualRevenuesChart(divName)
+    {
+
+          $(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetAnnualRevenues", "Employees")',
+                        data: { },
+
+                        success: function (chartsdata) {
+
+                            var Data = chartsdata.JSONList;
+                            var data = new google.visualization.DataTable();
+
+                            data.addColumn('string', 'Year');
+                            data.addColumn('number', 'Sales');
+
+                            //Loop through each element in the list data
+                            for (var i = 0; i < Data.length; i++)
+                            {
+                                data.addRow([
+                                    Data[i].Date,
+                                    Data[i].Sales
+                                ]);
+                            }
+
+                         var formatter = new google.visualization.NumberFormat({ pattern: '$ #,###' });
+                            formatter.format(data, 1);
+
+                var view = new google.visualization.DataView(data);
+                    view.setColumns(
+                        [0, 1,
+                            { calc: "stringify", sourceColumn: 1, type: "string", role: "annotation" }]);
+
+                    var columnChartOptions =
+                    {
+                        title: 'Annual Orders for ' + '@currentEmployee.FullName',
+                        titleTextStyle: { fontSize: 18},
+                        titlePosition: 'top',
+                        fontName: 'Tahoma',
+                        dataOpacity: 0.8,
+                        legend: { position: "none" },
+
+                        vAxis:
+                        {
+                            title: 'Orders',
+                            titleTextStyle: { fontSize: 14, italic: false },
+                            textStyle: { fontName: 'Tahoma', fontSize: 12, italic: false  },
+                        },
+                        hAxis:
+                        {
+                            title: 'Year',
+                            titleTextStyle: { fontSize: 14, italic: false },
+                            textStyle: { fontName: 'Tahoma', fontSize: 12 },
+                        },
+                    };
+
+
+                    var pieChartOptions =
+                    {
+                        titlePosition: 'none',
+                        fontName: 'Tahoma',
+                        dataOpacity: 0.8,
+                        legend: { position: "bottom" },
+                            };
+
+                            // Instantiate and draw our chart, passing in options
+                            var chartColumns = new google.visualization.ColumnChart(document.getElementById(divName));
+                            //var chart = new google.visualization.BarChart(document.getElementById(divName));
+
+                            var chartPie = new google.visualization.PieChart(document.getElementById("Pie"));
+
+                            chartColumns.draw(view, columnChartOptions);
+                            chartPie.draw(view, pieChartOptions);
+
+
+                        },
+
+                        error: function () {
+                            alert("Error loading data! Please try again.");
+                        }
+
+                    });
+          })
+
+    }
+
+</script>

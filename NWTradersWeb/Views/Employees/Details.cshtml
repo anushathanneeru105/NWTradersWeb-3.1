@@ -1,0 +1,161 @@
+﻿@using NWTradersWeb.Models
+@model Employee
+@{
+    ViewBag.Title = "NWTraders Web Employees Portal";
+}
+
+<div class="shadow rounded-lg p-2" style="color:; background-color: ">
+    <h4 class="text-center">
+        Hello @Model.FullName
+    </h4>
+</div>
+
+<div class="pt-2">
+    <div class="navbar w3-bar small ">
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             onclick="AllEmployeeSales();" id="Products" style="cursor:pointer"
+             title="Compare sales for all Employees">
+            All Employee Sales
+        </div>
+
+        <div> &nbsp;</div>
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             onclick="AnnualOrders();" id="Orders" style="cursor:pointer">
+            Orders
+        </div>
+
+        <div> &nbsp;</div>
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             onclick="AnnualRevenues();" id="Revenues" style="cursor:pointer"
+             title="Annual Revenues">
+            Revenues
+        </div>
+
+        <div> &nbsp;</div>
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             onclick="EmployeeTopProducts();" id="Products" style="cursor:pointer"
+             title="All EmployeeProducts">
+            Top Products
+        </div>
+
+        <div> &nbsp;</div>
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             onclick="EmployeeTopCustomers();" id="Products" style="cursor:pointer"
+             title="All EmployeeProducts">
+            Top Customers
+        </div>
+
+        <div> &nbsp;</div>
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             onclick="ForYouToComplete();" id="Products" style="cursor:pointer"
+             title="Left for you to complete">
+            Top Product Categories
+        </div>
+
+        <div> &nbsp;</div>
+
+        <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+             style="cursor:pointer" onclick="ForYouToComplete();"
+             title="Left for you to complete">
+            Others?
+        </div>
+
+    </div>
+
+    <div class=" shadow-sm rounded-lg">
+
+        <!-- Partials are dropped into this container. -->
+        <div id="Partials" class="container" style="min-height:500px">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+
+    });
+
+    function AnnualOrders()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("AnnualOrders", "Employees")',
+            data: { },
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in Annual Orders'); }
+        });
+    }
+
+    function AnnualRevenues()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("AnnualRevenues", "Employees")',
+            data: { },
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in Annual Revenues'); }
+            });
+            }
+
+    function AllEmployeeSales()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("AllEmployeeSales", "Employees")',
+            data: { },
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in Annual Orders'); }
+        });
+    }
+
+    function EmployeeTopProducts()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("EmployeeTopProducts", "Employees")',
+            data: { },
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in All Employee Products'); }
+        });
+    }
+
+    function EmployeeTopCustomers()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("EmployeeTopCustomers", "Employees")',
+            data: { },
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in All Employee Customers'); }
+        });
+    }
+
+    function ForYouToComplete()
+    {
+        $('#Partials').empty();
+        $('#Partials').html("<h4> Left for you to complete<h4>");
+    }
+
+
+</script>

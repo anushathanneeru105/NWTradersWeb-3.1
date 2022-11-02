@@ -1,0 +1,148 @@
+﻿@using NWTradersWeb.Models
+@model IEnumerable<OrderProducts>
+
+@{
+    int year = ViewBag.Year;
+    Employee currentEmployee = Session["currentEmployee"] as Employee;
+
+}
+<div style="">
+    <div class="card-header">
+        <h5 class="text-center"> Orders Placed in @year</h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+            <div id="X" class=" col-3" style="">
+
+            </div>
+
+            <div id="Y" class="col-9" style="">
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card-footer text-center ">
+        <div class="btn w3-hover-shadow w3-hover-border-black" style="font-size:small">
+            @Html.ActionLink(" Back", "Details", "Employees", new { @id = currentEmployee.EmployeeID }, new { })
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="">
+
+    $(document).ready(function () {
+
+        google.charts.load('current', { 'packages': ['corechart', 'table'] });
+        google.charts.setOnLoadCallback(DrawMonthlyOrdersChart('X', 'Y'));
+
+        function DrawMonthlyOrdersChart(tableDivName, chartDivName)
+    {
+        $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetAnnualOrdersModal", "Employees")',
+                data: {Year: '@year'},
+                success: function (chartsdata) {
+
+                    var Data = chartsdata.JSONList;
+                    var data = new google.visualization.DataTable();
+                    var dataForTable = new google.visualization.DataTable();
+
+                    data.addColumn('string', 'Month');
+                    data.addColumn('number', 'Orders');
+
+                    dataForTable.addColumn('string', 'Month');
+                    dataForTable.addColumn('number', 'Orders');
+
+                    //Loop through each element in the list data
+                    for (var i = 0; i < Data.length; i++)
+                    {
+                        data.addRow([
+                            Data[i].Date,
+                            Data[i].NumberOfOrders
+                        ]);
+
+                        dataForTable.addRow([
+                            Data[i].Date,
+                            Data[i].NumberOfOrders
+                        ]);
+
+                    }
+
+                    // Coloring the columns.
+                    var rainbow = new Rainbow();
+                    rainbow.setNumberRange(1, data.getNumberOfRows());
+                    rainbow.setSpectrum('steelblue', 'goldenrod');
+
+                    //Add a column to specify the color
+                    data.addColumn({ 'type': 'string', 'role': 'style' });
+
+                    // for each row in the datatable, add a new color
+                    for (var i = 0; i < data.getNumberOfRows(); i++) {
+                        data.setCell(i, 2, '' + rainbow.colorAt(i + 1) + '');
+                    }
+
+                    var view = new google.visualization.DataView(data);
+                    view.setColumns(
+                        [0, 1, 2,
+                            { calc: "stringify", sourceColumn: 1, type: "string", role: "annotation" },
+                        ]);
+
+                    var columnChartOptions =
+                    {
+                        title: 'Monthly Orders in ' + '@year',
+                        titleTextStyle: { fontSize: 18},
+                        titlePosition: 'top',
+                        fontName: 'Tahoma',
+
+                        titlePosition: 'top',
+                        fontName: 'Tahoma',
+                        dataOpacity: 0.8,
+                        legend: { position: "none" },
+
+                        vAxis:
+                        {
+                            textStyle: { fontName: 'Tahoma', fontSize: 8, italic: false  },
+                            title: '# of Orders'
+                        },
+                        hAxis:
+                        {
+                            title: 'Month',
+                            titleTextStyle: { fontSize: 8, italic: false },
+                            textStyle: { fontName: 'Tahoma', fontSize: 12 },
+                        },
+                    };
+
+                    // Instantiate and draw our chart, passing in options
+                    var chartColumns = new google.visualization.ColumnChart(document.getElementById(chartDivName));
+                    chartColumns.draw(data, columnChartOptions);
+
+                    var tableOptions = {
+                        allowHtml: true,
+                    };
+
+                    var table = new google.visualization.Table(document.getElementById(tableDivName));
+
+                    var formatter = new google.visualization.BarFormat();
+                    formatter.format(dataForTable, 1);
+
+                    table.draw(dataForTable, tableOptions);
+                },
+
+                error: function () { alert("Error loading data! Please try again."); }
+
+            });
+        })
+    }
+    });
+
+</script>

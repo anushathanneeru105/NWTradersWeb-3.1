@@ -1,0 +1,39 @@
+﻿@using NWTradersWeb.Models;
+@model Order
+
+@{
+    //Read the current customer object from the session into the currentCustomer (maybe null)
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+
+    Order ShoppingCart = currentCustomer.myShoppingCart;
+
+}
+
+    <div class="py-4 pl-2">
+        We are about to place this Order
+    </div>
+    <table class="table-bordered ">
+        <tr>
+            <th class="px-1">Product</th>
+            <th class="px-2">#</th>
+            <th class="px-1">Price</th>
+            <th class="px-1">Total</th>
+        </tr>
+        @foreach (Order_Detail item in ShoppingCart.Order_Details)
+        {
+            <tr>
+                <td>@item.Product.ProductName</td>
+                <td class="text-center">@item.Quantity</td>
+
+                <td class="text-center">@Html.DisplayFor(modelItem => item.UnitPrice) </td>
+                <td class="text-center">@Html.DisplayFor(modelItem => item.Total) </td>
+            </tr>
+        }
+
+        <tr>
+            <td colspan="5" class="text-right">
+                Order Total: @Html.DisplayFor(item => ShoppingCart.TotalSales)
+            </td>
+        </tr>
+
+    </table>

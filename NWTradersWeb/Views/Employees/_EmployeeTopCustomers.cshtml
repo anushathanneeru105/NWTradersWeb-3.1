@@ -1,0 +1,150 @@
+﻿@using NWTradersWeb.Models
+@model IEnumerable<CustomerSales>
+
+@{
+
+    ViewBag.Title = "Top 10 Customers";
+    decimal CompanyTotal = ViewBag.CompanyTotalSales;
+    decimal EmployeeTotal = ViewBag.EmployeeTotalSales;
+    decimal companyRatio, yourRatio;
+
+    List<string> theYears = NWTradersUtilities.BeginToEndOrderYears();
+    theYears.RemoveAt(0);
+
+    List<SelectListItem> Years = theYears.Select(item => new SelectListItem
+    {
+        Value = item,
+        Text = item
+    }).
+ToList();
+    Years.Insert(0, new SelectListItem { Text = "All", Value = "" });
+
+
+}
+
+
+<div id="TopCustomers">
+
+    <div class="card-header">
+        <h5 class="text-center"> Top 10 Revenue Generating Customers </h5>
+    </div>
+
+    <div> &nbsp;</div>
+
+    <div class="navbar shadow small">
+
+        <div class="input-group-sm">
+            Select Year
+            @Html.DropDownList("Year", Years,
+                         new
+                         {
+                             @class = "custom-select small",
+                             @id = "Year",
+                             @onchange = "RefreshPage();"
+                         })
+        </div>
+
+    </div>
+
+    <div> &nbsp;</div>
+
+    <div class="card-body">
+
+        <div class="row small">
+
+            <div class="col-6 ">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="text-center" colspan="3">  All Employee Top 10 Customers</th>
+                    </tr>
+                    <tr>
+                        <td class="text-center" colspan="3">  Change to Top 10 for year</td>
+                    </tr>
+                    <tr>
+                        <th class="px-1"> Product</th>
+                        <th class="px-1 text-right"> Sales </th>
+                        <th class="px-1 text-right"> % of <br />Company Sales </th>
+                    </tr>
+
+                    @foreach (CustomerSales item in ViewBag.AllEmployeeCustomers)
+                    {
+                        companyRatio = (item.Sales / CompanyTotal);
+                        <tr>
+                            <td class="px-1"> @item.theCustomer</td>
+
+                            <td class="px-1 text-right"> @item.Sales.ToString("$#,##0.00") </td>
+                            <td class="px-1 text-right"> @companyRatio.ToString("##0.00 %")</td>
+
+                        </tr>
+                    }
+                </table>
+            </div>
+
+
+            <div class="col-6">
+                <table class="table table-striped ">
+                    <tr>
+                        <th class="text-center" colspan="3">  Your Top 10 Customers </th>
+                    </tr>
+                    <tr>
+                        <th class="px-1"> Customer</th>
+                        <th class="px-1 text-right"> Sales </th>
+                        <th class="px-1 text-right"> % of <br /> Your Sales </th>
+                    </tr>
+
+                    @foreach (CustomerSales item in Model)
+                    {
+                        yourRatio = (item.Sales / EmployeeTotal);
+
+                        <tr>
+                            <td class="px-1"> @item.theCustomer </td>
+                            <td class="px-1 text-right"> @item.Sales.ToString("$#,##0.00") </td>
+                            <td class="px-1 text-right"> @yourRatio.ToString("##0.00 %") </td>
+                        </tr>
+
+                    }
+                </table>
+            </div>
+        </div>
+
+        <div class="alert-light py-4 text-center" id="Charts">
+            Charts go here
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+    });
+
+    function RefreshPage() {
+
+        var year = $('#Year').val();
+
+        $("#TopCustomers").empty();
+
+        $(function () {
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("EmployeeTopCustomers", "Employees")',
+                data: {
+                    Year: year
+                },
+                success: function (partialViewResult)
+                { $("#TopCustomers").html(partialViewResult); },
+
+                error: function ()
+                { $('#TopCustomers').html('Something went wrong in getting employee top Products'); }
+
+            });
+        })
+    }
+</script>

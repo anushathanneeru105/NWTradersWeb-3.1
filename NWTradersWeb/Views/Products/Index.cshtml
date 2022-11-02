@@ -1,0 +1,206 @@
+﻿@using NWTradersWeb.Models;
+@model IEnumerable<Product>
+
+@{
+    ViewBag.Title = "Index";
+
+    // Get the list of product categories from utilities
+    List<string> categories = NWTradersUtilities.AllProductCategories();
+    categories.Insert(0, ""); // Add an empty string to represent All - you could also use the word all here.
+
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+}
+
+<div class="row">
+    <h2>Products Sold by North Wind Traders</h2>
+    <div class="col-9 shadow rounded-lg">
+        <!-- Search Bar-->
+        <div>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <nav class="navbar">
+                    <!-- Search by Product Name..-->
+                    <div class="w3-padding-small small">
+                        Product Name
+                        <div class="input-group-append input-group-sm  ">
+                            @Html.TextBox("searchProductName",
+                            ViewBag.CurrentFilter as string,
+                             new
+                             {
+                                 @class = "form-control small",
+                                 @name = "searchProductName",
+                                 @placeholder = "Search by Product Name",
+                                 onchange = "this.form.submit();",
+                                 value = ViewBag.searchProductName
+                             })
+                        </div>
+                    </div>
+
+                    <!-- Select Category..-->
+                    <div class="input-group-sm small">
+                        Product Category
+                        @Html.DropDownList("searchCategoryName",
+                                new SelectList(categories),
+                         new
+                         {
+                             @class = "form-control input-group-sm  small",
+                             @name = "searchCategoryName",
+                             onchange = "this.form.submit();"
+                         })
+                    </div>
+
+                    <!-- Discontinued ..-->
+                    <div class="custom-control custom-checkbox">
+                        Show Discontinued?
+                        @Html.CheckBox("showDiscontinued", false,
+                         new
+                         {
+                             @id = "showDiscontinued",
+                             @class = "custom-control",
+                             @name = "showDiscontinued",
+                             onchange = "this.form.submit();"
+                         })
+                    </div>
+
+
+                </nav>
+            }
+        </div>
+
+        <!-- Results Tables ... List of Products-->
+        <div>
+            <table class="table-bordered table-striped" style="font-size:small; width:100%">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ProductName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.QuantityPerUnit)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UnitPrice)
+                    </th>
+                    <th>
+                        Available?
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Discontinued)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Category.CategoryName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Supplier.CompanyName)
+                    </th>
+                    <th>Add to order</th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.QuantityPerUnit)
+                        </td>
+                        <td class="text-right">
+                            @Html.DisplayFor(modelItem => item.UnitPrice)
+                        </td>
+                        <td>
+                            @(item.UnitsInStock > 0)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.Discontinued)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Supplier.CompanyName)
+                        </td>
+                        <td class="text-center">
+                            @if (item.Discontinued == false)
+                            {
+                                @Html.ActionLink("add_shopping_cart", "AddToCart", "Customers",
+                                    new {
+                                        @ProductID = item.ProductID,
+                                        @searchProductName=ViewBag.searchProductName,
+                                        @searchCategoryName=ViewBag.searchCategoryName
+                                    },
+                                    new { @class = "material-icons", @style = "color:black" })}
+                            else
+                            { <span> Not Available</span>}
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <!-- Shopping cart-->
+        @if (currentCustomer == null)
+        {
+            <table class="shadow rounded-lg">
+                <tr>
+                    <td class="h5 py-2 pt-4 text-center" style="background-color: lightsteelblue">
+                        <i class="fas fa-shopping-cart fa-lg"> </i>
+                        Your Cart
+                    </td>
+                </tr>
+                <tr>
+                    <td class="py-4 text-center">
+                        <div>Please Log-In to add items to your shopping cart</div>
+
+                        <div class=" btn btn-sm rounded-lg w3-hover-shadow">
+                            @Html.ActionLink(" ", "Login", "Customers", new { },
+                 new { @class = "text-decoration-none fas fa-user-lock fa-lg" })
+
+                            @Html.ActionLink("Login", "Login", "Customers", new { },
+                 new { @class = "btn text-decoration-none" })
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <div id="ShoppingCart">
+                <!-- Call an Action from the Controller. OLD Code -->
+                @*@Html.Action( "ShoppingCart", "Customers", new { currentCustomer.CustomerID })*@
+                Shopping Cart Goes Here
+            </div>
+            }
+    </div>
+    </div>
+
+<script>
+
+
+    // the function refreshes the shopping cart page.
+    function RefreshShoppingCart()
+    {
+        $.ajax({
+            url: '@Url.Action("RefreshShoppingCart", "Customers")',
+            data: { UserNm: ""},
+
+            success: function (result)
+            {
+                $('#ShoppingCart').html(result);
+            },
+            error: function () {
+                $('#ShoppingCart').html('Something went wrong in Refreshing Shopping Cart');
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        RefreshShoppingCart();
+    });
+
+</script>

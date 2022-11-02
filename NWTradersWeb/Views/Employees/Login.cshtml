@@ -1,0 +1,112 @@
+﻿<!-- Employees Login -->
+@using NWTradersWeb.Models;
+@model Employee
+@{
+
+    // Clear the session so that current users may be logged out.
+    Session.Clear();
+
+    ViewBag.Title = "North Wind Traders Employees Login.";
+    SelectList allEmployees = new SelectList(NWTradersUtilities.AllEmployeeLastNames());
+
+}
+
+
+<div class="container alert-light p-2">
+    <hr />
+</div>
+
+<table class="container" style="width:80%">
+
+    <tr class="">
+
+        <td class="container rounded-lg py-4 w3-border-black" style="width:50%">
+
+            <!-- Begin Login Form -->
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="card-header text-center py-2 rounded-lg">
+                    <h5> NorthWind Employees Login </h5>
+                </div>
+
+                <!--Card content-->
+                <div class="card-body align-items-center border ">
+                    <div>
+                        <h6>
+                            Please select your Last Name from the list and enter your password to continue.
+                        </h6>
+                    </div>                    <!-- Employee Last Name-->
+                    <div class="input-group-sm">
+
+                        @Html.DropDownList("EmployeeLastName", allEmployees as SelectList,
+                                new
+                                     {
+                                    @class = "custom-select",
+                                    @type = "submit",
+                                    onchange = "this.form.submit();"
+                                })
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.LastNameMessage))
+                    {
+                        <div class="alert-danger"> @ViewBag.LastNameMessage </div>
+                    }
+
+                    <!-- Password -->
+                    <div class="form-group ">
+                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label " })
+
+
+                        @Html.PasswordFor(model => model.Password,
+                       new { @class = "form-control ", @style = "font-size: small", placeholder = "Enter Employee Password" })
+
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                    @if (!string.IsNullOrEmpty(ViewBag.EmployeePasswordMessage))
+                    {
+                        <div class="alert-danger">@ViewBag.EmployeePasswordMessage</div>
+                    }
+
+                </div>
+
+                <!-- Login or Cancel -->
+                <div class="card-footer text-center rounded-lg">
+                    <input type="submit" value="Login"
+                           class="btn btn-light w3-hover-shadow" />
+
+                    &nbsp; &nbsp; &nbsp;
+
+                    <input type="submit" value="Logout"
+                           class="btn btn-light w3-hover-shadow" />
+
+                </div>
+
+            }
+        </td>
+
+        <td class="">
+            <div class="text-center h2">
+                North Wind Traders Employee Login.
+            </div>
+            <div class="text-center pt-5">
+                <span class="badge badge-pill badge-light">
+                    If you are a customer, please log-in here:
+                    @Html.ActionLink("login", "Login", "Customers",
+                   new { },
+                   new { @class = "material-icons text-decoration-none w3-hover-shadow", @style = "color: black" })
+                </span>
+            </div>
+        </td>
+
+    </tr>
+</table>
+
+<div class="container alert-light p-2">
+    <hr />
+</div>
+
+
+
+

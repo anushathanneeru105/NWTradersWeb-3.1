@@ -1,0 +1,142 @@
+﻿@using NWTradersWeb.Models;
+@model Customer
+
+@{
+
+    ViewBag.Title = "Analysis";
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+
+}
+
+<div>
+
+    <div class="container shadow alert-secondary navbar" style="background-color:khaki">
+        <h4 class="text-center ">
+            Welcome @Model.CompanyName
+        </h4>
+
+        <div>
+            <div class="btn w3-hover-shadow" title="View your orders and related details">
+                <i class="material-icons align-text-bottom">home</i>
+                @Html.ActionLink("Home", "Details", "Customers",
+                    new { @id = currentCustomer.CustomerID },
+                    new { @class = "text-decoration-none" })
+            </div>
+
+            <div class="btn w3-hover-shadow" title="View analysis">
+                <i class="material-icons align-text-bottom">analytics</i>
+                @Html.ActionLink("Analysis", "Analysis", "Customers",
+                   new { @id = currentCustomer.CustomerID },
+                   new { @class = "text-decoration-none" })
+            </div>
+
+        </div>
+    </div>
+
+    <div> &nbsp; </div>
+
+    <ul class="nav nav-tabs small ">
+
+        <li class="nav-item pl-2">
+            <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+                 onclick="AnnualSales();" id="Products" style="cursor:pointer"
+                 title="Left for you to complete">
+                Annual Sales
+            </div>
+        </li>
+
+        <li class="nav-item px-2">
+            <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+                 onclick="TopProducts();" id="Products" style="cursor:pointer"
+                 title="Left for you to complete">
+                Top Products
+            </div>
+        </li>
+
+        <li class="nav-item px-2">
+            <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+                 onclick="TopProductCategories();" id="Products" style="cursor:pointer"
+                 title="Left for you to complete">
+                Top Product Categories
+            </div>
+        </li>
+
+        <li class="nav-item px-2">
+            <div class="w3-button w3-bottombar w3-hover-light-gray w3-hover-shadow rounded-lg"
+                 onclick="ForYouToComplete();" id="Products" style="cursor:pointer"
+                 title="This can be here or on the details(Home) Page for the customer">
+                Valued Customer Discounts
+            </div>
+            </li>
+    </ul>
+
+    <div class=" shadow-sm rounded-lg tab-pane active">
+
+        <!-- Partials are dropped into this container. -->
+        <div id="Partials" class="" style="min-height:400px">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+
+    });
+
+    function ForYouToComplete()
+    {
+        $('#Partials').empty();
+        $('#Partials').html("<h4 class=text-center p-4 rounded-lg> Left for you to complete </h4>");
+    }
+
+
+    function AnnualSales()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("AnnualSales", "Customers")',
+            data: { CustomerID: '@Model.CustomerID'},
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in Annual Orders'); }
+        });
+
+    }
+
+    function TopProducts()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("TopProducts", "Customers")',
+            data: { CustomerID: '@Model.CustomerID'},
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in Annual Orders'); }
+        });
+
+    }
+
+    function TopProductCategories()
+    {
+        $('#Partials').empty();
+
+        $.ajax({
+            url: '@Url.Action("TopProductCategories", "Customers")',
+            data: { CustomerID: '@Model.CustomerID'},
+
+            success: function (result) { $('#Partials').html(result); },
+            error: function () { $('#Partials').html('Something went wrong in Annual Orders'); }
+        });
+
+    }
+
+
+</script>

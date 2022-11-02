@@ -1,0 +1,211 @@
+﻿<!-- Index page for Customer - No Login required.-->
+@using NWTradersWeb.Models;
+@using PagedList.Mvc;
+@using PagedList;
+
+@model IPagedList<Customer>
+
+@{
+    ViewBag.Title = "NW Traders  Customers ";
+
+    // Page Sizing.
+    int NumberFound = Model.TotalItemCount;
+    List<string> itemsPerPage = NWTradersUtilities.itemsPerPage;
+
+    int? First = (ViewBag.pageNumber - 1) * ViewBag.pageSize + 1;
+    int? Last = ViewBag.pageNumber * ViewBag.pageSize;
+
+    Last = (Last > NumberFound) ? NumberFound : Last;
+
+    // Get the list of countries from utilities
+    List<string> countries = NWTradersUtilities.AllCountries().ToList();
+    countries.Insert(0, ""); // Add an empty string to represent All - you could also use the word all here.
+
+    // Get the list of countries from utilities
+    List<string> titles = NWTradersUtilities.AllTitles().ToList();
+    titles.Insert(0, ""); // Add an empty string to represent All - you could also use the word all here.
+
+    // Get the list of countries from utilities
+    List<string> regions = NWTradersUtilities.AllRegions().ToList();
+    regions.Insert(0, ""); // Add an empty string to represent All - you could also use the word all here.
+
+    Customer aCustomer = Model.FirstOrDefault();
+}
+
+<div class="h2">@ViewBag.Title</div>
+
+<!-- Search Bar-->
+<div class="container border-dark" style="font-size:small;width:100%">
+    <!-- Begin Search  Form -->
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- Search routines ... add more fields here.-->
+        <nav class="navbar">
+
+            <!-- Search by Company Name..-->
+            <div class="w3-padding-small">
+                Customer Company Name
+                <div class="input-group-append input-group-sm  ">
+
+                    @Html.TextBox("searchCompanyName", ViewBag.CurrentFilter as string,
+                     new
+                     {
+                         @class = "form-control",
+                         @name = "searchCompanyName",
+                         @placeholder = "Search by Company",
+                         onchange = "this.form.submit();",
+                         value = ViewBag.searchCompanyName
+                     })
+                </div>
+            </div>
+
+            <!-- Search by Contact Name..-->
+            <div class="w3-padding-small">
+                Customer Contact Name
+                <div class="input-group-append input-group-sm  ">
+
+                    @Html.TextBox("searchContactName", ViewBag.CurrentFilter as string,
+                     new
+                     {
+                         @class = "form-control",
+                         @name = "searchContactName",
+                         @placeholder = "Search by Contact Name",
+                         onchange = "this.form.submit();",
+                         value = ViewBag.searchContactName
+                     })
+                </div>
+            </div>
+
+            <!-- Select title..-->
+            <div class="input-group-sm ">
+                Contact Title
+                @Html.DropDownList("searchTitle",
+                        new SelectList(titles),
+                 new
+                 {
+                     @class = "form-control custom-select-sm",
+                     @name = "searchTitle",
+                     onchange = "this.form.submit();"
+                 })
+            </div>
+
+            <!-- Select Country..-->
+            <div class="input-group-sm">
+                Country
+                @Html.DropDownList("searchCountryName",
+                        new SelectList(countries),
+                 new
+                 {
+                     @class = "form-control input-group-sm  ",
+                     @name = "searchCountryName",
+                     onchange = "this.form.submit();"
+                 })
+            </div>
+
+            <!-- Select Region -->
+            <div class="input-group-sm">
+                Region
+                @Html.DropDownList("searchRegion",
+                        new SelectList(regions),
+                 new
+                 {
+                     @class = "form-control input-group-sm  ",
+                     @name = "searchRegion",
+                     onchange = "this.form.submit();"
+                 })
+            </div>
+        </nav>
+    }
+</div>
+
+<!-- Results table-->
+<div class="container shadow-sm py-2">
+
+    <table class="table-bordered table-striped" style="font-size:small; width:100%">
+        <tr class="">
+            <th>@Html.DisplayNameFor(model => aCustomer.CompanyName) </th>
+            <th> Login </th>
+            <th>@Html.DisplayNameFor(model => aCustomer.ContactName)</th>
+            <th>@Html.DisplayNameFor(model => aCustomer.ContactTitle)</th>
+            <th>@Html.DisplayNameFor(model => aCustomer.Address)</th>
+            <th>@Html.DisplayNameFor(model => aCustomer.City)</th>
+            <th>@Html.DisplayNameFor(model => aCustomer.Country)</th>
+            <th>@Html.DisplayNameFor(model => aCustomer.Region)</th>
+
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyName)
+                </td>
+                <td class="btn-group input-group-sm align-middle " style="font-size:small" title="Click to Log-In, Manage your account and your orders">
+                    @Html.ActionLink("lock_open", "Login",
+                   new { @CompanyName = item.CompanyName },
+                   new { @class = "material-icons md-18  btn-sm btn-dark" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContactName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContactTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Region)
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+
+<!-- Page controls. -->
+<div class="container border-dark" style="font-size:small;width:100%">
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        if (NumberFound > 0)
+        {
+            <nav class="navbar">
+                <div class=" " style=" ">
+                    @Html.PagedListPager(Model, page => Url.Action("Index",
+                          new
+                          {
+                              page,
+                              sortOrder = ViewBag.sortOrder,
+                          }))
+                </div>
+                <div class="" style="">
+                    @First  .... @Last of @NumberFound Customers
+                </div>
+
+                <!-- Select Items Per Page -->
+                <div class="align-content-end " style="">
+                    Customers per Page:
+                    @Html.DropDownList("itemsPerPage", new SelectList(itemsPerPage),
+                 new
+                 {
+                     @class = "custom-select-sm",
+                     @style = "width:50%",
+                     @type = "submit",
+                     onchange = "this.form.submit();"
+                 })
+                </div>
+            </nav>
+        }
+    }
+</div>

@@ -1,0 +1,214 @@
+﻿
+@using NWTradersWeb.Models
+@model IEnumerable<OrderProducts>
+@{
+
+    Employee currentEmployee = Session["currentEmployee"] as Employee;
+}
+
+<div class="card">
+    <div class="card-header navbar">
+        <div class="">
+            <h6> Annual Number of Orders</h6>
+        </div>
+
+        <div class="small">
+            <!-- Averages -->
+            <table class="table-bordered table-striped ">
+                <tr>
+                    <td class="px-2 text-right " colspan="2">
+                        Orders Per Year
+                    </td>
+                </tr>
+                <tr class="">
+                    <td class="px-2 text-right "> Company Average:</td>
+                    <td class="px-2 text-right ">@ViewBag.CompanyAverageAnnualOrders.ToString("#,##0.00") </td>
+
+                </tr>
+
+                <tr class="">
+                    <td class="px-2 text-right ">  Your Average: </td>
+                    <td class="text-right px-2">@ViewBag.EmployeeAverageAnnualOrders.ToString("#,##0.00") </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-body small ">
+
+        <div class="row" style="min-height:400px">
+            <div class="col-2">
+                <table class="table-bordered table-striped ">
+                    <tr>
+                        <th>Year</th>
+                        <th> Orders</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td class="px-2">
+                                @item.Date
+                                <i class="fa-solid fa-chart-simple w3-hover-shadow p-2 rounded lg"
+                                   style="color:cornflowerblue; cursor:pointer; font-size:18px; font-variant-position:super"
+                                   onclick="ShowAnnualOrders('@item.Date');"
+                                   data-toggle="modal"
+                                   data-target="#AnnualOrdersModal"
+                                   title="Click to view orders placed in @item.Date">
+
+                                </i>
+
+                                <div class="modal fade" id="AnnualOrdersModal">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content" style="min-width:900px; min-height:650px" id="AnnualOrders">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                            <td class="text-right px-2"> @item.Number</td>
+                        </tr>
+
+                    }
+                </table>
+            </div>
+
+            <div id="Chart" class="col-6">
+
+            </div>
+
+            <div id="Pie" class="col-4">
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script type="">
+
+    $(document).ready(function () {
+
+    google.charts.setOnLoadCallback(DrawAnnualOrdersChart('Chart'));
+
+
+    function DrawAnnualOrdersChart(divName)
+    {
+
+        $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetAnnualOrders", "Employees")',
+                data: {},
+                success: function (chartsdata) {
+
+                    var Data = chartsdata.JSONList;
+                    var data = new google.visualization.DataTable();
+
+                    data.addColumn('string', 'Year');
+                    data.addColumn('number', 'Orders');
+
+                    //Loop through each element in the list data
+                    for (var i = 0; i < Data.length; i++)
+                    {
+                        data.addRow([
+                            Data[i].Date,
+                            Data[i].Number,
+                        ]);
+                    }
+
+                    // Coloring the columns.
+                    var rainbow = new Rainbow();
+                    rainbow.setNumberRange(1, data.getNumberOfRows());
+                    rainbow.setSpectrum('steelblue', 'goldenrod'); // get data.nRows colors between this range.
+
+                    //Add a column to specify the color
+                    data.addColumn({ 'type': 'string', 'role': 'style' });
+
+
+
+                    // for each row in the datatable, add a new color by asking "rainbow" for a color.
+                    for (var i = 0; i < data.getNumberOfRows(); i++) {
+                        data.setCell(i, 2, '' + rainbow.colorAt(i + 1) + '');
+                    }
+
+
+                    var view = new google.visualization.DataView(data);
+                    view.setColumns(
+                        [0, 1, 2,
+                            { calc: "stringify", sourceColumn: 1, type: "string", role: "annotation" }]);
+
+                    var columnChartOptions =
+                    {
+                        title: 'Annual Orders for ' + '@currentEmployee.FullName',
+                        titleTextStyle: { fontSize: 18},
+                        titlePosition: 'top',
+                        fontName: 'Tahoma',
+                        dataOpacity: 0.8,
+                        legend: { position: "none" },
+
+                        vAxis:
+                        {
+                            title: 'Orders',
+                            titleTextStyle: { fontSize: 14, italic: false },
+                            textStyle: { fontName: 'Tahoma', fontSize: 12, italic: false  },
+                        },
+                        hAxis:
+                        {
+                            title: 'Year',
+                            titleTextStyle: { fontSize: 14, italic: false },
+                            textStyle: { fontName: 'Tahoma', fontSize: 12 },
+                        },
+                    };
+
+
+                    var pieChartOptions =
+                    {
+                        titlePosition: 'none',
+                        fontName: 'Tahoma',
+                        dataOpacity: 0.8,
+                        legend: { position: "bottom" },
+                        chartArea: { height: "75%", width: "100%" },
+
+                    };
+
+                    // Instantiate and draw our chart, passing in options
+                    //var chartColumns = new google.visualization.ColumnChart(document.getElementById(divName));
+                    var chart = new google.visualization.BarChart(document.getElementById(divName));
+                    var chartPie = new google.visualization.PieChart(document.getElementById("Pie"));
+
+                    chart.draw(view, columnChartOptions);
+                    chartPie.draw(view, pieChartOptions);
+
+                },
+
+                error: function () { alert("Error loading data! Please try again."); }
+
+            });
+        })
+    }
+    });
+
+</script>
+
+<script>
+    function ShowAnnualOrders(year)
+    {
+        $.ajax({
+            url: '@Url.Action("AnnualOrdersModal", "Employees")',
+            data: { Year: year},
+
+            success: function (result)
+            { $('#AnnualOrders').html(result); },
+
+            error: function ()
+            { $('#AnnualOrders').html('Error in generating Orders Chart for ' + year); }
+
+        });
+
+    }
+
+</script>

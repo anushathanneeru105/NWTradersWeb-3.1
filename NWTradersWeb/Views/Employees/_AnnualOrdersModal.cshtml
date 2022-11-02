@@ -1,0 +1,146 @@
+﻿@using NWTradersWeb.Models
+@model IEnumerable<OrderProducts>
+
+@{ 
+    int year = ViewBag.Year;
+}
+<div >
+
+    <div class="card-header">
+
+    </div>
+
+    <div class="card-body">
+        
+
+        <div class="row" style="min-height:500px">
+            <div id="Table" class="col-4" style="">
+
+            </div>
+
+            <div id="Chart" class="col-8" style="">
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card-footer text-center ">
+        <div class="btn w3-hover-shadow w3-hover-border-black" style="font-size:small"
+             data-dismiss="modal">
+            Close
+        </div>
+
+    </div>
+</div>
+
+
+<script type="">
+
+    $(document).ready(function () {
+
+        google.charts.setOnLoadCallback(DrawAnnualOrdersModalChart('Table', 'Chart'));
+
+        function DrawAnnualOrdersModalChart(tableDivName, chartDivName)
+    {
+        $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetAnnualOrdersModal", "Employees")',
+                data: {Year: '@year'},
+                success: function (chartsdata) {
+
+                    var Data = chartsdata.JSONList;
+                    var data = new google.visualization.DataTable();
+                    var dataForTable = new google.visualization.DataTable();
+
+                    data.addColumn('string', 'Year');
+                    data.addColumn('number', 'Orders');
+
+                    dataForTable.addColumn('string', 'Year');
+                    dataForTable.addColumn('number', 'Orders');
+
+                    //Loop through each element in the list data
+                    for (var i = 0; i < Data.length; i++)
+                    {
+                        data.addRow([
+                            Data[i].Date,
+                            Data[i].Number
+                        ]);
+
+                        dataForTable.addRow([
+                            Data[i].Date,
+                            Data[i].Number
+                        ]);
+
+                    }
+
+
+                    // Coloring the columns.
+                    var rainbow = new Rainbow();
+                    rainbow.setNumberRange(1, data.getNumberOfRows());
+                    rainbow.setSpectrum('steelblue', 'goldenrod');
+
+                    //Add a column to specify the color
+                    data.addColumn({ 'type': 'string', 'role': 'style' });
+
+                    // for each row in the datatable, add a new color by asking "rainbow" for a color.
+                    for (var i = 0; i < data.getNumberOfRows(); i++) {
+                        data.setCell(i, 2, '' + rainbow.colorAt(i + 1) + '');
+                    }
+
+                    var view = new google.visualization.DataView(data);
+                    view.setColumns(
+                        [0, 1, 2,
+                            { calc: "stringify", sourceColumn: 1, type: "string", role: "annotation" }]);
+
+                    var columnChartOptions =
+                    {
+                        title: 'Monthly Orders in ' + '@year',
+
+                        titleTextStyle: { fontSize: 16 },
+                        titlePosition: 'out',
+                        titlePosition: 'top',
+
+                        fontName: 'Tahoma',
+                        fontSize: 12,
+                        dataOpacity: 0.8,
+                        legend: { position: "none" },
+                        vAxis:
+                        {
+                            textStyle: { fontName: 'Tahoma', fontSize: 12, italic: false  },
+                            title: '# of Orders'
+                        },
+                        hAxis:
+                        {
+                            title: 'Month',
+                            titleTextStyle: { fontSize: 8, italic: false },
+                            textStyle: { fontName: 'Tahoma', fontSize: 12 },
+                        },
+                    };
+                    var tableOptions = {
+                        allowHtml: true,
+                    };
+
+                    // Draw a data table to show the values.
+                    var formatter = new google.visualization.BarFormat();
+                    formatter.format(dataForTable, 1);
+
+                    var table = new google.visualization.Table(document.getElementById(tableDivName));
+                    table.draw(dataForTable, tableOptions);
+
+                    // Instantiate and draw our chart, passing in options
+                    var chartColumns = new google.visualization.ColumnChart(document.getElementById(chartDivName));
+                    chartColumns.draw(view, columnChartOptions);
+
+
+                },
+
+                error: function () { alert("Error loading data! Please try again."); }
+
+            });
+        })
+    }
+    });
+
+</script>

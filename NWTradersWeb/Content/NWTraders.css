@@ -1,0 +1,196 @@
+﻿body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* Google Table Visualization Styles*/
+.gTableCell {
+        font-family: "Tahoma";
+        font-size: 12px;
+        background-color:white;
+        text-align: center;
+    }
+
+/* Google Table Visualization Styles*/
+.gTableCellBigger {
+        font-family: "Tahoma";
+        font-size: 14px;
+        background-color:white;
+        text-align: right;
+}
+
+
+.gTableCellAlt {
+        font-family: "Tahoma";
+        font-size: 12px;
+        background-color:aliceblue;
+    }
+
+
+/* Styles used in nav Tabs and Tab Panes */
+.nav-tabs .nav-item .nav-link {
+    background-color: whitesmoke;
+    font-size: 12px;
+    padding: 5px;
+    margin: 2px;
+}
+
+    .nav-tabs .nav-item .nav-link.active {
+        background-color: lightsteelblue;
+        border: 1px solid lightgray;
+        font-weight: bold;
+        margin-right:4px;
+    }
+
+.tab-content {
+    border-top: transparent;
+    padding: 5px;
+}
+
+    .tab-content .tab-pane {
+    }
+
+/* NWTraders Analytics Specific Colors*/
+.ProductColor {
+    background-color: #eff4e4;
+    opacity: 0.8;
+    color: #000000;
+}
+
+.CustomerColor {
+    background-color: #e6e8fa;
+    opacity: 0.8;
+    color: #000000;
+}
+
+.empCodeColor {
+    background-color: #fdf9e5;
+    opacity: 0.8;
+    color: #000000;
+}
+
+.dashboardRedButton {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+    background-color: firebrick;
+    background-image: radial-gradient(circle 40px at 0 0, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,.8)), radial-gradient(circle 18px at 9px 8px, rgba(255,255,255,.7), rgba(0,0,0,0));
+    background-repeat: no-repeat, no-repeat;
+    border-width: 0.2px;
+    border-color: firebrick;
+    position: relative;
+}
+
+.dashboardGreenButton {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+    background-color: forestgreen;
+    background-image: radial-gradient(circle 40px at 0 0, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,.8)), radial-gradient(circle 18px at 9px 8px, rgba(255,255,255,.7), rgba(0,0,0,0));
+    background-repeat: no-repeat, no-repeat;
+    border-width: 0.2px;
+    border-color: forestgreen;
+    position: relative;
+}
+
+.dashboardOrangeButton {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+    background-color: orange;
+    background-image: radial-gradient(circle 40px at 0 0, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,.8)), radial-gradient(circle 18px at 9px 8px, rgba(255,255,255,.7), rgba(0,0,0,0));
+    background-repeat: no-repeat, no-repeat;
+    border-width: 0.2px;
+    border-color: orange;
+    position: relative;
+}
+.NWTraders-custom-select-sm {
+    height: calc(1.2em + 0.5rem );
+    padding-top: 0rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.1rem;
+    font-size: 0.9rem;
+    border: none;
+}
+
+
+
+/* Data Tables custom formatting*/
+div.dataTables_info {
+    padding: 3px 3px 3px 3px;
+    text-align:right;
+    width:100%;
+    font-size:10pt;
+}
+
+div.dataTables_filter {
+    font-size: 10pt;
+    padding: 1px 1px 1px 1px;
+    padding-bottom: 0px;
+    background-color: #ffffffee;
+    //box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.055);
+}
+
+    div.dataTables_filter input {
+        margin-left: 0.5em;
+        display: unset;
+        border-radius: 0.5rem ;
+        border:ridge 3px;
+        border-color: rgba(0, 0, 0, 0.075);
+        width: auto;
+    }
+
+/* Reduce vertical spacing */
+
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 0px;
+}
+
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    padding: 2px 4px 2px 4px;
+}
+/* End Reduce vertical spacing */
+
+.dashboardRedButton {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: firebrick;
+    background-image: radial-gradient(circle 40px at 0 0, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,.8)), radial-gradient(circle 18px at 9px 8px, rgba(255,255,255,.7), rgba(0,0,0,0));
+    background-repeat: no-repeat, no-repeat;
+    border-width: 0.2px;
+    border-color: firebrick;
+    position: relative;
+}
+
+.dashboardGreenButton {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: forestgreen;
+    background-image: radial-gradient(circle 40px at 0 0, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,.8)), radial-gradient(circle 18px at 9px 8px, rgba(255,255,255,.7), rgba(0,0,0,0));
+    background-repeat: no-repeat, no-repeat;
+    border-width: 0.2px;
+    border-color: forestgreen;
+    position: relative;
+}

@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+@using NWTradersWeb.Models
+
+@{
+    //Every page knows a current customer.
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+
+}
+
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - NW Traders 3.1 </title>
+
+    <!-- This link allows you to use google material icons in your site -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- This link allows you to use google charts in your site by loading the libraries for the chart types -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>google.charts.load('current', { 'packages': ['corechart', 'timeline', 'table', 'bar'] });</script>
+
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/bundles/DataTables")
+    @Scripts.Render("~/bundles/DataTableButtons")
+    @Scripts.Render("~/bundles/Buttons")
+    @Scripts.Render("~/bundles/ButtonsPrint")
+    @Scripts.Render("~/bundles/Rainbow")
+    @Styles.Render("~/Content/css")
+
+    <link href="~/content/datatables/css/jquery.datatables.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/datatables/css/buttons.datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/datatables/css/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    @RenderSection("scripts", required: false)
+
+</head>
+
+<body>
+    <!-- The common header will appear on all pages.-->
+    <div class="container shadow-lg rounded-lg  " style="background-color: lightsteelblue">
+
+        <div class="navbar row">
+            <div class="h1 col-5">
+                Northwind Traders
+            </div>
+            <div class="text-right small col-7">
+                <div>Your one stop shop for delectable eats and delightful beverages.</div>
+                <div>
+                    @if (currentCustomer != null)
+                    {
+                        <span>
+                            Welcome
+                            <span class=" ">
+                                @currentCustomer.CompanyName
+                                &nbsp;
+                                @Html.ActionLink("home_work", "Details", "Customers",
+                               new { @id = currentCustomer.CustomerID },
+                               new
+                                    {
+                                   @class = "material-icons text-decoration-none w3-hover-shadow",
+                                   @style = "color: black",
+                                   @title = "Home"
+                               })
+
+                                &nbsp;
+
+                                @Html.ActionLink("logout", "Logout", "Customers",
+                               new { },
+                               new
+                                    {
+                                   @class = "material-icons text-decoration-none w3-hover-shadow",
+                                   @style = "color: black",
+                                   @title = "Logout"
+                               })
+
+                            </span>
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            Please log in
+                            @Html.ActionLink("login", "Login", "Customers",
+                           new { },
+                           new { @class = "material-icons text-decoration-none w3-hover-shadow", @style = "color: black" })
+                            
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar">
+
+            <div class="btn border-dark w3-hover-shadow">
+                <i class="material-icons align-text-bottom">home</i>
+                @Html.ActionLink("Home", "Index", "Home",
+               new { },
+               new {@class="text-decoration-none"})
+            </div>
+
+            @if (currentCustomer == null) {
+            <div class="btn border-dark w3-hover-shadow text-decoration-none">
+                <i class="material-icons align-text-bottom">people_alt</i>
+                @Html.ActionLink("Customers", "Index", "Customers",
+                    new { },
+                    new { @class = "text-decoration-none" })
+            </div>
+            }
+            <div class="btn border-dark w3-hover-shadow text-decoration-none"
+                 title=" Go to Products">
+                <i class="material-icons align-text-bottom">widgets</i>
+                @Html.ActionLink("Our Products", "Index", "Products",
+               new { },
+               new { @class = "text-decoration-none" })
+            </div>
+
+            <div class="btn border-dark w3-hover-shadow text-decoration-none"
+                 title=" Go to your orders ">
+                <i class="material-icons align-text-bottom">shopping_basket</i>
+                @Html.ActionLink("Your Orders", "Index", "Orders",
+               new { },
+               new { @class = "text-decoration-none" })
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- spacer-->
+    <div>&nbsp;</div>
+
+    <!-- main body for all pages-->
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+
+</body>
+</html>
+<footer class="container  rounded-lg shadow-lg " style="background-color: steelblue">
+    <div class=" navbar">
+        <img src="~/images/UNCG.png" width="150" height="40" alt="Alternate Text" />
+        &nbsp;&nbsp;
+
+        <div class="text-right font-weight-bold badge">
+            <div class="btn w3-hover-shadow" title="Employee Login">
+                
+                @Html.ActionLink("badge", "Login", "Employees",
+               new { },
+               new { @class = "material-icons text-decoration-none", @style = "color: black" })
+            
+            </div>
+            &copy; @DateTime.Now.Year - Northwind Traders 
+        </div>
+    </div>
+
+</footer>
+

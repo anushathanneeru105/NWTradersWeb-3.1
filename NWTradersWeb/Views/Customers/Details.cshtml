@@ -1,0 +1,242 @@
+﻿@using NWTradersWeb.Models;
+@model Customer
+@{
+    ViewBag.Title = "Details";
+
+    Customer currentCustomer = Session["currentCustomer"] as Customer;
+
+    IEnumerable<Order> CustomerOrders = Model.RecentOrders();
+    IEnumerable<Product> RecentlyBoughtProducts = Model.RecentProducts();
+    IEnumerable<Product> FavoriteProducts = Model.FavoriteProducts();
+
+}
+
+<div>
+
+    <!-- Top Welcome Bar [Home] [Analysis] -->
+    <div class="container shadow navbar" style="background-color:silver">
+        <div class="navbar">
+
+            <div class="w3-hover-shadow p-2 rounded-lg" data-toggle="collapse" data-target="#CustomerInformation">
+                <i class="fa-solid fa-bars fa-lg  " 
+                   id="UpDownButton"></i>
+            </div>
+            &nbsp;
+            <h5 class="text-center">
+                Welcome @Model.CompanyName
+            </h5>
+        </div>
+        <div class="nav">
+            <div class="btn w3-hover-shadow" title="View your orders and related details">
+                <i class="material-icons align-text-bottom">home</i>
+                @Html.ActionLink("Home", "Details", "Customers",
+                    new { @id = currentCustomer.CustomerID },
+                    new { @class = "text-decoration-none" })
+            </div>
+
+            <div class="btn w3-hover-shadow" title="View analysis">
+                <i class="material-icons align-text-bottom">analytics</i>
+                @Html.ActionLink("Analysis", "Analysis", "Customers",
+                   new { @id = currentCustomer.CustomerID },
+                   new { @class = "text-decoration-none" })
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card shadow collapse" id="CustomerInformation" style="width: 33%; ">
+            <div class="card-header text-center" style="background-color: silver">
+                <h6>
+                    @Model.CompanyName 
+                </h6>            
+            </div>
+            <div class=" alert-light shadow-sm rounded-lg p-4">
+                <h6>
+                    @Model.ContactName
+                </h6>
+                <div class="pl-4">
+                    Address: &nbsp; @Html.DisplayFor(model => model.Address),<br />
+                    @Html.DisplayFor(model => model.City) ,&nbsp;
+                    @Html.DisplayFor(model => model.Region) ,&nbsp;
+                    @Html.DisplayFor(model => model.Country)&nbsp;<br />
+                    Phone: &thinsp;@Html.DisplayFor(model => model.Phone) <br />
+                    Fax: &thinsp;@Html.DisplayFor(model => model.Fax)
+                </div>            </div>
+
+        <div class="card-footer text-center " style="font-size:small">
+            @Html.ActionLink("Edit", "Edit",
+                    new { id = Model.CustomerID },
+                    new { @class = "btn btn-dark input-group-sm", style = "font-size:small" }
+                    )
+        </div>
+    </div>
+
+
+    <div class="card-deck  p-2">
+
+
+        <!-- Recent Orders -->
+        <div class="card shadow">
+            <div class="card-header text-center" style="background-color:palegoldenrod">
+                <h5>Recent Orders</h5>
+            </div>
+            <div class="card-body">
+                @if (CustomerOrders.Count() > 0)
+                {
+                    <table class="table-bordered table-striped" style="font-size:small; width:100%">
+                        <tr>
+                            <th class="text-center"> Date </th>
+                            <th class="text-right"> Total ($)</th>
+                            <th class="text-center">Items (#) </th>
+                            <th class="text-center"></th>
+
+                        </tr>
+                        @foreach (Order o in CustomerOrders)
+                        {
+                            string tip = "";
+                            foreach (Order_Detail od in o.Order_Details)
+                            {tip += od.Product.ProductName + ": \t" + od.Quantity + "\n";}
+                            <tr class="text-center ">
+
+                                <td class="pt-2">
+                                    @Html.DisplayFor(item => o.OrderDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(item => o.orderTotal)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(item => o.Order_Details.ToList().Count)
+                                        &nbsp;
+                                    <i class="fa-solid fa-circle-info fa-lg" style="color:cornflowerblue; cursor:help" title="@tip"></i>
+                                </td>
+
+                                <td class="p-2">
+                                    @Html.ActionLink(
+                                           " ", "Details", "Orders", new { @id = o.OrderID },
+                                           new
+                                                {
+                                               @class = "fa-solid fa-receipt fa-lg",
+                                               @style = "color:silver",
+                                               @title = "Order Details"
+                                           })
+                                </td>
+
+                            </tr>
+                        }
+                    </table>
+                }
+                else
+                {
+                    <div> No Orders found for: @Model.CompanyName </div>
+                }
+            </div>
+            <div class="card-footer text-center " style="font-size:small">
+                @Html.ActionLink("Place a New Order", "Index", "Products",
+                        new { },
+                        new
+                             {
+                            @class = "btn btn-dark input-group-sm",
+                            style = "font-size:small"
+                        })
+            </div>
+
+        </div>
+
+        <!-- Recently Bought Products -->
+        <div class="card shadow" id="RecentlyBoughtProducts">
+            <div class="card-header text-center" style="background-color:palegoldenrod">
+                <h5>Recently Bought</h5>
+            </div>
+            <div class="card-body">
+                <table class="table-bordered table-striped" style="font-size:small">
+                    <tr>
+                        <th>Product </th>
+                        <th>Category</th>
+                        <th>Price</th>
+                    </tr>
+                    @foreach (Product p in RecentlyBoughtProducts)
+                    {
+                        <tr class="py-3 text-center ">
+                            <td class="  " title="Buy Again">
+                                @Html.ActionLink(" ", "AddToCart", "Customers", new { @ProductID = p.ProductID }, new { @class = "fa-solid fa-cart-plus" })
+                                @Html.ActionLink(p.ProductName, "AddToCart", "Customers", new { @ProductID = p.ProductID }, new { })
+                            </td>
+                            <td>
+                                @Html.ActionLink(p.Category.CategoryName, "Index", "Products", 
+                               new { @searchCategoryName = p.Category.CategoryName}, 
+                               new { })
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(item => p.UnitPrice)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+
+            <div class="card-footer text-center " style="font-size:small">
+                @Html.ActionLink("View All Products", "Index", "Products",
+                        new { },
+                        new
+                             {
+                            @class = "btn btn-dark input-group-sm",
+                            style = "font-size:small"
+                        })
+            </div>
+
+        </div>
+
+        <!-- Favorite Products -->
+        <div class="card shadow" id="MostBoughtProducts">
+            <div class="card-header text-center" style="background-color: palegoldenrod">
+                <h5>Your favorite products</h5>
+            </div>
+            <div class="card-body">
+                <table class="table-bordered table-striped" style="font-size:small">
+                    <tr>
+                        <th>Product </th>
+                        <th>Category</th>
+                        <th>Price</th>
+                    </tr>
+                    @foreach (Product p in FavoriteProducts)
+                    {
+                        <tr class="py-3 text-center ">
+                            <td class="  " title="Buy Again">
+                                @Html.ActionLink(" ", "AddToCart", "Customers", new { @ProductID = p.ProductID }, new {@class = "fa-solid fa-cart-plus"})
+                                @Html.ActionLink(p.ProductName, "AddToCart", "Customers", new { @ProductID = p.ProductID }, new { })
+                            </td>
+                            <td>
+                                @Html.ActionLink(p.Category.CategoryName, "Index", "Products",
+                               new { @searchCategoryName = p.Category.CategoryName },
+                               new { })
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(item => p.UnitPrice)
+                            </td>
+                        </tr>
+                        }
+                    </table>
+            </div>
+
+            <div class="card-footer text-center " style="font-size:small">
+                @Html.ActionLink("View All Products", "Index", "Products",
+                        new { },
+                        new
+                             {
+                            @class = "btn btn-dark input-group-sm",
+                            style = "font-size:small"
+                        })
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>
